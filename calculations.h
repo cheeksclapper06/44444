@@ -2,8 +2,8 @@
 // Created by User on 24.10.2024.
 //
 
-#ifndef CALCULATIONS_H
-#define CALCULATIONS_H
+#ifndef CALCULATION_H
+#define CALCULATION_H
 #include <math.h>
 
 static double Taylor_sin(double radians, const double e)
@@ -26,7 +26,7 @@ static double Taylor_cos(double radians, const double e)
     int n = 1;
     do
     {
-        delta *= -pow(radians, 2.0) / (2.0 * (double)n * (2.0 * (double)n - 1.0));
+        delta *= -pow(radians, 2.0) / ((double)(2 * n) * (double)(2 * n - 1));
         cos += delta;
         n++;
     }
@@ -34,4 +34,4 @@ static double Taylor_cos(double radians, const double e)
     return cos;
 }
 
-#endif //CALCULATIONS_H
+#endif //CALCULATION_H
