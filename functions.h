@@ -2,42 +2,54 @@
 // Created by User on 24.10.2024.
 //
 
-#ifndef FUNCTIONS_H
-#define FUNCTIONS_H
+#ifndef FUNCTION_H
+#define FUNCTION_H
 #include <math.h>
 #include <conio.h>
-#include "validations.h"
+#include <stdbool.h>
+#include "validation.h"
 
 
 static int dx_val(const int x1, const int x2)
 {
+    bool InvalidInput;
     int dx = 0;
     do
     {
-        dx = validate_floating_value("Enter dx (step):");
+        dx = validate_integer_step_value("Enter dx (step):");
         if (x1 != x2 && dx == 0)
         {
             setTextColor(12);
-            printf("The step can't be equal to 0 when x1 != x2\n");
+            printf("The step can't be equal to 0 when x1 is not equal to x2\n");
             setTextColor(7);
             fflush(stdin);
+            InvalidInput = true;
         }
-        else if (x1 < x2 && dx < 0)
+        else
+            if (x1 < x2 && (dx <= 0 || dx > x2 - x1))
+            {
+                setTextColor(12);
+                printf("The step can't be less than 0 or equal to it when x1 < x2\nOtherwise please write the step according to a given limit");
+                setTextColor(7);
+                fflush(stdin);
+                InvalidInput = true;
+            }
+        else
+            if (x1 > x2 && (dx >= 0 || dx > x1 - x2))
+            {
+                setTextColor(12);
+                printf("The step can't be greater than 0 or equal to it when x1 > x2\nOtherwise please write the step according to a given limit\n");
+                setTextColor(7);
+                fflush(stdin);
+                InvalidInput = true;
+            }
+        else
         {
-            setTextColor(12);
-            printf("The step can't be less than 0 when x1 < x2\n");
-            setTextColor(7);
             fflush(stdin);
-        }
-        else if (x1 > x2 && dx > 0)
-        {
-            setTextColor(12);
-            printf("The step can't be greater than 0 when x1 > x2\n");
-            setTextColor(7);
-            fflush(stdin);
+            InvalidInput = false;
         }
     }
-    while ((x1 != x2 && dx == 0) || (x1 < x2 && dx < 0) || (x1 > x2 && dx > 0));
+    while (InvalidInput);
     return dx;
 }
 
@@ -54,26 +66,35 @@ static double get_accuracy()
         printf("3. Exponential form\n");
 
         accuracy = getch();
-        while (getchar() != '\n' && getchar() != EOF);
+        while (getchar() != '\n');
 
         switch (accuracy)
         {
             case 49:
-                int decimal = 0;
-                decimal = validate_integer_accuracy("Enter the number of decimal places:");
-                e = pow(10, -decimal);
-                printf("\nIn exponential form the accuracy is %e\n", e);
+                e = pow(10, -validate_integer_accuracy("Enter the number of decimal places:\n"
+                                                    "The input range is [1 - 15]\n"));
+                printf("In exponential form the accuracy is: ");
+                setTextColor(2);
+                printf("%e\n", e);
+                setTextColor(7);
                 break;
 
             case 50:
-                e = validate_floating_accuracy("Enter accuracy as a real number (e.g. 0.001):", "Invalid Input, enter an exponential number greater than zero");
-                printf("In exponential form the accuracy is %e\n", e);
+                e = validate_floating_accuracy("Enter accuracy as a real number (e.g. 0.001)\n"
+                                               "The input range is [0.000000000000001 - 0.1]", "Invalid input, pLease enter a real value in given range");
+                printf("In exponential form the accuracy is: ");
+                setTextColor(2);
+                printf("%e\n", e);
+                setTextColor(7);
                 break;
 
             case 51:
-                e = validate_floating_accuracy("Enter accuracy as an exponential number (e.g. 1e-3):", "Invalid Input, enter a real number greater than zero");
-                printf("Enter accuracy as an exponential number (e.g. 1e-3):\n");
-                printf("The accuracy is %e\n", e);
+                e = validate_floating_accuracy("Enter accuracy as an exponential number (e.g. 1e-3):\n"
+                                               "The input range is [1e-5 - 1e-1]", "Invalid input, pLease enter an exponential value in given range");
+                printf("The accuracy is: ");
+                setTextColor(2);
+                printf("%e\n", e);
+                setTextColor(7);
                 break;
 
             default:
@@ -86,7 +107,7 @@ static double get_accuracy()
     return e;
 }
 
-double degrees_to_radians(double x)
+static double degrees_to_radians(double x)
 {
     double radians = 0;
     radians = x * (M_PI / 180.0);
@@ -94,4 +115,4 @@ double degrees_to_radians(double x)
 }
 
 
-#endif //FUNCTIONS_H
+#endif //FUNCTION_H
